@@ -1,3 +1,31 @@
+#' Supervised Sparse Decomposition (SSD) Class
+#'
+#' This class implements Supervised Sparse Decomposition (SSD) for supervised feature extraction.
+#'
+#' @field X Input matrix, containing the data for decomposition.
+#' @field L Target matrix, used in supervised decomposition.
+#' @field D Dictionary matrix, initialized or learned.
+#' @field Z Coefficients matrix for sparse coding.
+#' @field W Weight matrix for feature extraction.
+#' @field G Diagonal matrix controlling sparsity in decomposition.
+#' @field A Regression matrix for supervised learning.
+#' @field h Dimensionality of the latent space.
+#' @field lambda_ Regularization parameter for decomposition.
+#' @field nepoch Number of epochs for model training.
+#' @field method Method for decomposition.
+#' @field optmethod Optimization method for weight matrix.
+#' @field tauw Learning rate for gradient-based optimization.
+#' @field initialization Initialization type for matrices.
+#' @field beta Regularization parameter for supervised learning.
+#' @field X_approximation_error_ratio Ratio of approximation error in the input space.
+#' @field Z_approximation Approximation of matrix Z.
+#' @field reg_mse Mean squared error for supervised regression.
+#'
+#' @section Methods:
+#' - \code{initialize(h, lambda_, nepoch, method, optmethod, tauw, initialization, beta)}: Initializes the SSD model with given parameters.
+#' - \code{fit(X, L, D)}: Fits the SSD model to the input data X and target L, optionally with dictionary matrix D.
+#'
+#' @export
 SSD <- R6Class("Supervised Sparse Decomposition",
                public = list(
                 X = NULL,
@@ -18,14 +46,17 @@ SSD <- R6Class("Supervised Sparse Decomposition",
                 X_approximation_error_ratio = NULL,
                 Z_approximation = NULL,
                 reg_mse = NULL,
-                initialize = function(h, 
-                                      lambda_, 
-                                      nepoch, 
-                                      method, 
-                                      optmethod, 
-                                      tauw, 
-                                      initialization, 
-                                      beta) {
+                
+                #' @description Initializes an SSD object.
+                #' @param h Integer, dimensionality of the latent space.
+                #' @param lambda_ Numeric, regularization parameter.
+                #' @param nepoch Integer, number of epochs for training.
+                #' @param method Character, method for decomposition.
+                #' @param optmethod Character, optimization method for W.
+                #' @param tauw Numeric, learning rate.
+                #' @param initialization Integer, type of initialization.
+                #' @param beta Numeric, regularization parameter for supervised learning.
+                initialize = function(h, lambda_, nepoch, method, optmethod, tauw, initialization, beta) {
                     self$h <- h
                     self$lambda_ <- lambda_
                     self$nepoch <- nepoch
@@ -34,8 +65,13 @@ SSD <- R6Class("Supervised Sparse Decomposition",
                     self$tauw <- tauw
                     self$initialization <- initialization
                     self$beta <- beta
-
                 },
+                
+                #' @description Fits the SSD model to input data and target matrix.
+                #' @param X Matrix, input data for decomposition.
+                #' @param L Matrix, target matrix for supervised decomposition.
+                #' @param D Matrix, optional dictionary matrix. If NULL, D will be learned.
+                #' @return The fitted SSD object.
                 fit = function(X, L, D = NULL) {
                     L_rescale <- L
                     A0_rescale <- runif(1)
@@ -175,17 +211,24 @@ SSD <- R6Class("Supervised Sparse Decomposition",
                         self$reg_mse <- reg_mse
                     }
                 }
-                ))
+               ))
 
-
+#' Gradient Descent Helper Function
+#'
+#' This function performs gradient descent or mini-batch gradient descent on the dictionary matrix.
+#'
+#' @param D Matrix, the dictionary matrix to be updated.
+#' @param Z Matrix, the sparse representation matrix.
+#' @param X Matrix, input data.
+#' @param tau_d Numeric, learning rate for gradient descent.
+#' @return Updated dictionary matrix.
+#' @noRd
 .gradDesc <- function(D, Z, X, tau_d) {
   if (ncol(X) < 1000) {
-    # Gradient descent
     D <- D - tau_d * (D %*% Z - X) %*% t(Z)
   } else {
-    # Mini-batch gradient descent
     S <- ncol(X)
-    r <- sample(S)  # Random permutation
+    r <- sample(S)
     for (i in seq(1, S, by = 1000)) {
       X1 <- X[, r[i:min(i + 999, S)]]
       Z1 <- Z[, r[i:min(i + 999, S)]]
@@ -195,10 +238,27 @@ SSD <- R6Class("Supervised Sparse Decomposition",
   return(D)
 }
 
+#' Sigmoid Function
+#'
+#' Applies the sigmoid function element-wise to a matrix or vector.
+#'
+#' @param x Numeric, input matrix or vector.
+#' @return Numeric matrix or vector with sigmoid applied.
+#' @noRd
 .sigmoid <- function(x) {
   1 / (1 + exp(-x))
 }
 
+#' Objective Function for Matrix Form
+#'
+#' Calculates the objective function value for supervised sparse decomposition.
+#'
+#' @param theta Numeric, vector representing weight matrix W.
+#' @param Z Matrix, sparse representation.
+#' @param G Matrix, diagonal matrix for sparsity control.
+#' @param X_intercept Matrix, input data with intercept term.
+#' @return Numeric, objective function value.
+#' @noRd
 .object_fun_matrix_form <- function(theta, Z, G, X_intercept) {
   W <- matrix(theta, nrow = nrow(Z), ncol = nrow(X_intercept))
   SigmaWX <- .sigmoid(W %*% X_intercept)
@@ -206,6 +266,16 @@ SSD <- R6Class("Supervised Sparse Decomposition",
   return(cost)
 }
 
+#' Gradient Function for Matrix Form
+#'
+#' Computes the gradient of the objective function for optimization.
+#'
+#' @param theta Numeric, vector representing weight matrix W.
+#' @param Z Matrix, sparse representation.
+#' @param G Matrix, diagonal matrix for sparsity control.
+#' @param X_intercept Matrix, input data with intercept term.
+#' @return Numeric, vector representing the gradient.
+#' @noRd
 .gradient_fun <- function(theta, Z, G, X_intercept) {
   W <- matrix(theta, nrow = nrow(Z), ncol = nrow(X_intercept))
   SigmaWX <- .sigmoid(W %*% X_intercept)
