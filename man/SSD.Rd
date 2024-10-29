@@ -14,7 +14,7 @@ This class implements Supervised Sparse Decomposition (SSD) for supervised featu
 \section{Methods}{
 
 \itemize{
-\item \code{initialize(h, lambda_, nepoch, method, optmethod, tauw, initialization, beta)}: Initializes the SSD model with given parameters.
+\item \code{initialize(h, lambda, nepoch, method, optmethod, tauw, initialization, beta)}: Initializes the SSD model with given parameters.
 \item \code{fit(X, L, D)}: Fits the SSD model to the input data X and target L, optionally with dictionary matrix D.
 }
 }
@@ -38,23 +38,17 @@ This class implements Supervised Sparse Decomposition (SSD) for supervised featu
 
 \item{\code{h}}{Dimensionality of the latent space.}
 
-\item{\code{lambda_}}{Regularization parameter for decomposition.}
+\item{\code{lambda}}{Regularization parameter for decomposition.}
 
 \item{\code{nepoch}}{Number of epochs for model training.}
 
-\item{\code{method}}{Method for decomposition.}
-
-\item{\code{optmethod}}{Optimization method for weight matrix.}
-
 \item{\code{tauw}}{Learning rate for gradient-based optimization.}
-
-\item{\code{initialization}}{Initialization type for matrices.}
 
 \item{\code{beta}}{Regularization parameter for supervised learning.}
 
-\item{\code{X_approximation_error_ratio}}{Ratio of approximation error in the input space.}
+\item{\code{recon_err_ra}}{Ratio of approximation error in the input space.}
 
-\item{\code{Z_approximation}}{Approximation of matrix Z.}
+\item{\code{Z_approx}}{Approximation of matrix Z.}
 
 \item{\code{reg_mse}}{Mean squared error for supervised regression.}
 }
@@ -74,7 +68,7 @@ This class implements Supervised Sparse Decomposition (SSD) for supervised featu
 \subsection{Method \code{new()}}{
 Initializes an SSD object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{SSD$new(h, lambda_, nepoch, method, optmethod, tauw, initialization, beta)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{SSD$new(h, lambda, nepoch, tauw, beta)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -82,17 +76,11 @@ Initializes an SSD object.
 \describe{
 \item{\code{h}}{Integer, dimensionality of the latent space.}
 
-\item{\code{lambda_}}{Numeric, regularization parameter.}
+\item{\code{lambda}}{Numeric, regularization parameter.}
 
 \item{\code{nepoch}}{Integer, number of epochs for training.}
 
-\item{\code{method}}{Character, method for decomposition.}
-
-\item{\code{optmethod}}{Character, optimization method for W.}
-
 \item{\code{tauw}}{Numeric, learning rate.}
-
-\item{\code{initialization}}{Integer, type of initialization.}
 
 \item{\code{beta}}{Numeric, regularization parameter for supervised learning.}
 }
