@@ -6,7 +6,7 @@
 
 **Requirements:**
 
-- [the SPAMS-R package](https://github.com/getspams/spams-R)
+- [the SPAMS R package](https://github.com/getspams/spams-R)
 
 To install SSD on R, you can use the `devtools` package and run from R:
 ```R
