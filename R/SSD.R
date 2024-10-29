@@ -2,6 +2,8 @@
 #'
 #' This class implements Supervised Sparse Decomposition (SSD) for supervised feature extraction.
 #'
+#' @importFrom R6 R6Class
+#' 
 #' @field X Input matrix, containing the data for decomposition.
 #' @field L Target matrix, used in supervised decomposition.
 #' @field D Dictionary matrix, initialized or learned.
@@ -26,7 +28,7 @@
 #' - \code{fit(X, L, D)}: Fits the SSD model to the input data X and target L, optionally with dictionary matrix D.
 #'
 #' @export
-SSD <- R6Class("Supervised Sparse Decomposition",
+SSD <- R6::R6Class("Supervised Sparse Decomposition",
                public = list(
                 X = NULL,
                 L = NULL,
