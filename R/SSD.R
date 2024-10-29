@@ -102,13 +102,13 @@ SSD <- R6::R6Class("Supervised Sparse Decomposition",
                             for (j in 1:50) {
                                 if (FIX_D) {
                                     if (self$beta != 0) {
-                                        A <- .gradDesc(A, Z, rbind(X, L - A0 * rep(1, N)), tau_d)
+                                        A <- .gradDesc(A, Z, rbind(X, L - c(A0 * rep(1, N))), tau_d)
                                         A <- matrix(A, nrow = 1)
                                         A0 <- mean(A0 - 0.1 * (A0 + A %*% Z - L))
                                     }
                                 } else {
                                     if (self$beta != 0) {
-                                        DNew <- .gradDesc(rbind(D, A), Z, rbind(X, L - A0 * rep(1, N)), tau_d)
+                                        DNew <- .gradDesc(rbind(D, A), Z, rbind(X, L - c(A0 * rep(1, N))), tau_d)
                                         D <- DNew[1:(nrow(DNew) - 1), ]
                                         A <- DNew[nrow(DNew), ]
                                         A <- matrix(A, nrow = 1)
@@ -123,7 +123,7 @@ SSD <- R6::R6Class("Supervised Sparse Decomposition",
                         }
 
                         if (self$beta != 0) {
-                            X_eq <- as.matrix(rbind(X, G %*% SigmaWX, L - A0 * rep(1, N)))
+                            X_eq <- as.matrix(rbind(X, G %*% SigmaWX, L - c(A0 * rep(1, N))))
                             D_eq <- as.matrix(rbind(D, diag(K), A))
                         } else {
                             X_eq <- as.matrix(rbind(X, G %*% SigmaWX))
@@ -166,11 +166,11 @@ SSD <- R6::R6Class("Supervised Sparse Decomposition",
                         trloss[ite] <- norm(X - D %*% Z, "F")^2 + norm(G %*% .sigmoid(W %*% X_intercept) - Z, "F")^2
                         recon_err_ra <- norm(X - D %*% (G %*% .sigmoid(W %*% X_intercept)), "F") / norm(X, "F")
 
-                        A0 <- matrix(A0, nrow = 1)
+                        A0mat <- matrix(A0, nrow = 1)
 
                         if (self$beta != 0) {
                             Z_intercept <- rbind(rep(1, N), Z)
-                            L_hat <- cbind(A0, A) %*% Z_intercept
+                            L_hat <- cbind(A0mat, A) %*% Z_intercept
                             reg_mse <- mean((L_hat - L)^2)
                             cat(sprintf("Ite %d Object error: %f Z approx err ratio: %f Reg MSE: %f\n", ite, trloss[ite], recon_err_ra, reg_mse))
                             flush.console()
@@ -188,7 +188,7 @@ SSD <- R6::R6Class("Supervised Sparse Decomposition",
                     self$Z <- Z
                     self$Z_approx <- G %*% .sigmoid(W %*% X_intercept)
                     if (self$beta != 0) {
-                        self$A <- cbind(A0, A)
+                        self$A <- cbind(A0mat, A)
                         self$reg_mse <- reg_mse
                     }
                 }
