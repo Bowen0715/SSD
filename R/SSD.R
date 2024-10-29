@@ -133,7 +133,7 @@ SSD <- R6::R6Class("Supervised Sparse Decomposition",
                         D_eq <- D_eq %*% diag(1 / (sqrt(colSums(D_eq^2)) + eps))
 
                         Z <- spams.lasso(X_eq, D_eq, lambda1 = self$lambda, lambda2 = 0, pos = TRUE, numThreads = -1)
-                        Z <- diag(1 / (sqrt(colSums(rbind(D, diag(K), A)^2)) + eps)) %*% Z
+                        Z <- as.matrix(diag(1 / (sqrt(colSums(rbind(D, diag(K), A)^2)) + eps)) %*% Z)
 
                         SigmaWX <- .sigmoid(W %*% X_intercept)
                         temp <- diag(1 / (rowSums(SigmaWX^2) + eps))
