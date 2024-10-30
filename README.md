@@ -9,7 +9,9 @@
 To install SSD on R, you can use the `devtools` package and run from R:
 ```R
 library(devtools) # or library(remotes)
+# Install the SPAMS R package
 install_github("getspams/spams-R")
+# Install the SSD R package
 install_github("Bowen0715/SSD-R")
 ```
 

@@ -4,8 +4,8 @@
 #'
 #' @importFrom R6 R6Class
 #' 
-#' @field X Input matrix, containing the data for decomposition.
-#' @field L Target matrix, used in supervised decomposition.
+#' @field X Input matrix (m x N), feature dim: m, sample dim: N.
+#' @field L Label vector (1 x N).
 #' @field D Dictionary matrix, initialized or learned.
 #' @field Z Coefficients matrix for sparse coding.
 #' @field W Weight matrix for feature extraction.
@@ -58,15 +58,15 @@ SSD <- R6::R6Class("Supervised Sparse Decomposition",
                 
                 #' @description Fits the SSD model to input data and target matrix.
                 #' @param X Matrix, input data for decomposition.
-                #' @param L Matrix, target matrix for supervised decomposition.
+                #' @param L Matrix, label vector for supervised decomposition.
                 #' @param D Matrix, optional dictionary matrix. If NULL, D will be learned.
-                #' @return The fitted SSD object.
+                #' @return The fitted SSD model object.
                 fit = function(X, L, D = NULL) {
                     set.seed(42)
                     A0 <- runif(1)
                     m <- nrow(X)
                     N <- ncol(X)
-                    trloss <- numeric(nepoch)
+                    trloss <- numeric(self$nepoch)
 
                     DLparam <- list(
                         'K' = self$h,
