@@ -21,7 +21,7 @@ nepoch <- 100
 model <- SSD$new(h, lambda, nepoch)
 model$fit(X, L)
 
-# D Matrix (m x h), the dictionary matrix to be updated.
+# D Matrix (m x h), the dictionary matrix.
 # Z Matrix (h x N), the sparse representation matrix.
 D <- model$D
 Z <- model$Z
