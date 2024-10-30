@@ -15,4 +15,6 @@ install_github("getspams/spams-R")
 install_github("Bowen0715/SSD-R")
 ```
 
+## Example Usage
 
+See the SSD-R\example\exp.R for a simple implementation.

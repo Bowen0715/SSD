@@ -22,9 +22,9 @@ This class implements Supervised Sparse Decomposition (SSD) for supervised featu
 \section{Public fields}{
 \if{html}{\out{<div class="r6-fields">}}
 \describe{
-\item{\code{X}}{Input matrix, containing the data for decomposition.}
+\item{\code{X}}{Input matrix (m x N), feature dim: m, sample dim: N.}
 
-\item{\code{L}}{Target matrix, used in supervised decomposition.}
+\item{\code{L}}{Label vector (1 x N).}
 
 \item{\code{D}}{Dictionary matrix, initialized or learned.}
 
@@ -97,14 +97,14 @@ Fits the SSD model to input data and target matrix.
 \describe{
 \item{\code{X}}{Matrix, input data for decomposition.}
 
-\item{\code{L}}{Matrix, target matrix for supervised decomposition.}
+\item{\code{L}}{Matrix, label vector for supervised decomposition.}
 
 \item{\code{D}}{Matrix, optional dictionary matrix. If NULL, D will be learned.}
 }
 \if{html}{\out{</div>}}
 }
 \subsection{Returns}{
-The fitted SSD object.
+The fitted SSD model object.
 }
 }
 \if{html}{\out{<hr>}}
