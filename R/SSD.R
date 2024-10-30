@@ -15,14 +15,13 @@
 #' @field h Dimensionality of the latent space.
 #' @field lambda Regularization parameter for decomposition.
 #' @field nepoch Number of epochs for model training.
-#' @field tauw Learning rate for gradient-based optimization.
 #' @field beta Regularization parameter for supervised learning.
 #' @field recon_err_ra Ratio of approximation error in the input space.
 #' @field Z_approx Approximation of matrix Z.
 #' @field reg_mse Mean squared error for supervised regression.
 #'
 #' @section Methods:
-#' - \code{initialize(h, lambda, nepoch, method, optmethod, tauw, initialization, beta)}: Initializes the SSD model with given parameters.
+#' - \code{initialize(h, lambda, nepoch, beta)}: Initializes the SSD model with given parameters.
 #' - \code{fit(X, L, D)}: Fits the SSD model to the input data X and target L, optionally with dictionary matrix D.
 #'
 #' @export
@@ -39,7 +38,6 @@ SSD <- R6::R6Class("Supervised Sparse Decomposition",
                 h = NULL,
                 lambda = NULL,
                 nepoch = NULL,
-                tauw = NULL,
                 beta = NULL,
 
                 Z_approx = NULL,
@@ -50,13 +48,11 @@ SSD <- R6::R6Class("Supervised Sparse Decomposition",
                 #' @param h Integer, dimensionality of the latent space.
                 #' @param lambda Numeric, regularization parameter.
                 #' @param nepoch Integer, number of epochs for training.
-                #' @param tauw Numeric, learning rate.
                 #' @param beta Numeric, regularization parameter for supervised learning.
-                initialize = function(h, lambda, nepoch, tauw, beta) {
+                initialize = function(h, lambda, nepoch = 1000, beta = 1) {
                     self$h <- h
                     self$lambda <- lambda
                     self$nepoch <- nepoch
-                    self$tauw <- tauw
                     self$beta <- beta
                 },
                 
@@ -159,16 +155,13 @@ SSD <- R6::R6Class("Supervised Sparse Decomposition",
                         if (err_cur <= err_old) {
                             W <- W_new
                             err_old <- err_cur
-                        } else {
-                            self$tauw <- self$tauw * 0.1
                         }
 
                         trloss[ite] <- norm(X - D %*% Z, "F")^2 + norm(G %*% .sigmoid(W %*% X_intercept) - Z, "F")^2
                         recon_err_ra <- norm(X - D %*% (G %*% .sigmoid(W %*% X_intercept)), "F") / norm(X, "F")
 
-                        A0mat <- matrix(A0, nrow = 1)
-
                         if (self$beta != 0) {
+                            A0mat <- matrix(A0, nrow = 1)
                             Z_intercept <- rbind(rep(1, N), Z)
                             L_hat <- cbind(A0mat, A) %*% Z_intercept
                             reg_mse <- mean((L_hat - L)^2)

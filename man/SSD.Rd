@@ -14,7 +14,7 @@ This class implements Supervised Sparse Decomposition (SSD) for supervised featu
 \section{Methods}{
 
 \itemize{
-\item \code{initialize(h, lambda, nepoch, method, optmethod, tauw, initialization, beta)}: Initializes the SSD model with given parameters.
+\item \code{initialize(h, lambda, nepoch, beta)}: Initializes the SSD model with given parameters.
 \item \code{fit(X, L, D)}: Fits the SSD model to the input data X and target L, optionally with dictionary matrix D.
 }
 }
@@ -42,8 +42,6 @@ This class implements Supervised Sparse Decomposition (SSD) for supervised featu
 
 \item{\code{nepoch}}{Number of epochs for model training.}
 
-\item{\code{tauw}}{Learning rate for gradient-based optimization.}
-
 \item{\code{beta}}{Regularization parameter for supervised learning.}
 
 \item{\code{recon_err_ra}}{Ratio of approximation error in the input space.}
@@ -68,7 +66,7 @@ This class implements Supervised Sparse Decomposition (SSD) for supervised featu
 \subsection{Method \code{new()}}{
 Initializes an SSD object.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{SSD$new(h, lambda, nepoch, tauw, beta)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{SSD$new(h, lambda, nepoch = 1000, beta = 1)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -79,8 +77,6 @@ Initializes an SSD object.
 \item{\code{lambda}}{Numeric, regularization parameter.}
 
 \item{\code{nepoch}}{Integer, number of epochs for training.}
-
-\item{\code{tauw}}{Numeric, learning rate.}
 
 \item{\code{beta}}{Numeric, regularization parameter for supervised learning.}
 }
